@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-//définition des fonctions utilisées par la suite
+//dÃ©finition des fonctions utilisÃ©es par la suite
 int Init( void );
 int Draw( void );
 void Frame( void );
@@ -16,12 +16,17 @@ void afficher_background (void);
 void afficher_tableau (void);
 void free_surface(void);
 void creer_piece(void);
+void afficher_timer(void);
+void afficher_score(void);
+void afficher_best_score(void);
+void afficher_nbr_ligne(void);
 
-//La mémoire vidéo contenant ce qui s'affiche
+
+//La mÃ©moire vidÃ©o contenant ce qui s'affiche
 SDL_Surface *ecran;
-//Les évènements du programme
+//Les Ã©vÃ¨nements du programme
 SDL_Event evenements;
-//La mémoire vidéo contenant le fond du jeu
+//La mÃ©moire vidÃ©o contenant le fond du jeu
 SDL_Surface *Background;
 //La destination de la copie du fond
 SDL_Rect rect;
@@ -29,9 +34,19 @@ SDL_Rect rect;
 TTF_Font *police;
 //La surface pour afficher le niveau
 SDL_Surface *surface_niveau;
+//La surface pour afficher le timer
+SDL_Surface *surface_timer;
+//La Surface pour afficher le score
+SDL_Surface *surface_score;
+//La Surface pour afficher le score
+SDL_Surface *surface_best_score;
+//La Surface pour afficher le nombre de ligne
+SDL_Surface *surface_nbr_ligne;
+
 //La couleur du score (blanc);
-SDL_Color couleur = {255,255,000};
+SDL_Color couleur = {255,255,255};
 SDL_Surface *ico;
+
 
 
 void free_surface(void)
@@ -45,9 +60,9 @@ SDL_FreeSurface(ecran);
 
 int Init( void )
 {
-  if ( SDL_Init( SDL_INIT_VIDEO ) == -1 )
+  if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1 )
     {
-      printf( "Echec lors du chargement de la vidéo : %s", SDL_GetError() );
+      printf( "Echec lors du chargement de la vidÃ©o : %s", SDL_GetError() );
       SDL_Quit();
     }
   else
@@ -57,7 +72,7 @@ int Init( void )
 	{  //On marque teris dans la barre de titre	 
 	  SDL_WM_SetCaption("Tetris !", NULL);
 	  //On cache le curseur de la souris	
-	  SDL_ShowCursor(SDL_DISABLE);
+	  // SDL_ShowCursor(SDL_DISABLE);
 	  //On charge les images du jeu
 	  charger_images();
           // une icone pour windows
@@ -90,6 +105,10 @@ int Draw( void )
 {
   afficher_background ();
   afficher_niveau ();
+  afficher_timer();
+ afficher_score();
+ afficher_best_score();
+ afficher_nbr_ligne();
   //afficher_tableau ();
 
   SDL_Flip( ecran );
@@ -114,7 +133,7 @@ void Frame( void )
          
 	  break;
 	case SDL_QUIT:
-            TTF_CloseFont(police); /* Doit être avant TTF_Quit() */
+            TTF_CloseFont(police); /* Doit Ãªtre avant TTF_Quit() */
             TTF_Quit(); 
 	  free_surface();
 	  SDL_Quit();
@@ -132,7 +151,7 @@ int Init_ttf( void ){
     }
 }
 int charger_police( void ){
-  //On charge  la police à utiliser
+  //On charge  la police Ã  utiliser
   police = TTF_OpenFont ("verdana.ttf", 16);
   if (police == NULL)
     {
@@ -146,13 +165,14 @@ int charger_police( void ){
 void afficher_niveau (void)
 {
   char chaine_niveau[3];
-  int niveau = 123;
+  int niveau = 7;
+
   sprintf (chaine_niveau, "%d",niveau ) ;
   surface_niveau = TTF_RenderText_Solid (police,chaine_niveau , couleur);
   if (surface_niveau)
     {
-      rect.x = 173;
-      rect.y = 400;
+      rect.x = 215;
+      rect.y = 330;
 	
       SDL_BlitSurface (surface_niveau, NULL, ecran, &rect);
               
@@ -167,8 +187,57 @@ void afficher_background (void){
   SDL_BlitSurface( Background, &rect, ecran, &rect );
 }
 
+void afficher_timer (void) 
+   {
+  char chaine_timer [5];
+  int timer = 350;
+  sprintf ( chaine_timer, "%d", timer);
+  surface_timer = TTF_RenderText_Solid ( police,chaine_timer , couleur);
+  if(surface_timer){
+    rect.x = 450;
+    rect.y = 420;
+    SDL_BlitSurface(surface_timer, NULL, ecran , &rect);
+  }
+}
+ 
 
 
+  
+void afficher_score(void){
+  char chaine_score [5];
+  int score = 350;
+  sprintf ( chaine_score, "%d", score);
+  surface_score = TTF_RenderText_Solid ( police,chaine_score , couleur);
+  if(surface_score){
+    rect.x = 450;
+    rect.y = 420;
+    SDL_BlitSurface(surface_score, NULL, ecran , &rect);
+  }
+}
+
+void afficher_best_score(void){
+  char chaine_best_score [5];
+  int best_score = 400;
+  sprintf ( chaine_best_score, "%d", best_score);
+  surface_best_score = TTF_RenderText_Solid ( police,chaine_best_score , couleur);
+  if(surface_best_score){
+    rect.x = 445;
+    rect.y = 330;
+    SDL_BlitSurface(surface_best_score, NULL, ecran , &rect);
+  }
+}
+
+void afficher_nbr_ligne(void){
+  char chaine_nbr_ligne [3];
+  int nbr_ligne = 10;
+  sprintf ( chaine_nbr_ligne, "%d", nbr_ligne);
+  surface_nbr_ligne = TTF_RenderText_Solid ( police,chaine_nbr_ligne , couleur);
+  if(surface_nbr_ligne){
+    rect.x = 200;
+    rect.y = 415;
+    SDL_BlitSurface(surface_nbr_ligne, NULL, ecran , &rect);
+  }
+}
 
 int main( int argc, char* argv[] )
 {
