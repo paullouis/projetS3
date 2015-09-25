@@ -15,6 +15,7 @@ int Init_ttf( void );
 void afficher_background (void);
 void afficher_tableau (void);
 void free_surface(void);
+void creer_piece(void);
 
 //La mémoire vidéo contenant ce qui s'affiche
 SDL_Surface *ecran;
@@ -177,4 +178,88 @@ int main( int argc, char* argv[] )
     }
     
   return 0;
+}
+
+
+void creer_piece(void)
+{
+  int tab[4][2];
+  int piece;
+int I,J;
+ /* Pour chaque ligne ... */
+ for (I=0; I<4; I++)  
+   {
+    /* ... considérer chaque composante */
+/* ... considérer chaque composante */
+    for (J=0; J<2; J++)  
+         
+      tab[I][J]=0;
+         
+   }
+switch (piece)
+	{
+		case 0:
+			//Pièce constituée de 4 carrés placés en carré
+			//au milieu et en bas de la zone du haut
+			tab[1][1] = piece + 1;
+			tab[1][2] = piece + 1;
+			tab[2][1] = piece + 1;
+			tab[2][2] = piece + 1;
+			break;
+
+
+		case 1:
+			//Pièce constituée de 4 carrés placés en ligne
+	       
+			tab[0][1] = piece + 1;
+			tab[1][1] = piece + 1;
+			tab[2][1] = piece + 1;
+			tab[3][1] = piece + 1;
+			break;
+
+	case 2:
+			//Pièce constituée de 4 carrés placés en T
+	       
+			tab[1][1] = piece + 1;
+			tab[2][1] = piece + 1;
+			tab[3][1] = piece + 1;
+			tab[2][2] = piece + 1;
+			break;
+
+	case 3:
+			//Pièce constituée de 4 carrés placés en l
+	       
+			tab[1][1] = piece + 1;
+			tab[2][1] = piece + 1;
+			tab[3][1] = piece + 1;
+			tab[1][2] = piece + 1;
+			break;
+	case 4:
+			//Pièce constituée de 4 carrés placés en l invere
+	       
+			tab[1][1] = piece + 1;
+			tab[2][1] = piece + 1;
+			tab[3][1] = piece + 1;
+			tab[2][3] = piece + 1;
+			break;
+
+
+	case 5:
+			//Pièce constituée de 4 carrés placés en S
+	       
+			tab[1][1] = piece + 1;
+			tab[2][1] = piece + 1;
+			tab[2][2] = piece + 1;
+			tab[3][2] = piece + 1;
+			break;
+	case 6:
+			//Pièce constituée de 4 carrés placés en S inverce
+	       
+			tab[2][1] = piece + 1;
+			tab[3][1] = piece + 1;
+			tab[1][2] = piece + 1;
+			tab[2][2] = piece + 1;
+			break;
+      
+	}
 }
