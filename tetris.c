@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-//dÃ©finition des fonctions utilisÃ©es par la suite
+//dÃƒÂ©finition des fonctions utilisÃƒÂ©es par la suite
 int Init( void );
 int Draw( void );
 void Frame( void );
@@ -28,11 +28,11 @@ void afficher_futur_tetramino(void);
 void afficher_matrice_jeu (void);
 void chute_tetramino(void);
 
-//La mÃ©moire vidÃ©o contenant ce qui s'affiche
+//La mÃƒÂ©moire vidÃƒÂ©o contenant ce qui s'affiche
 SDL_Surface *ecran;
-//Les Ã©vÃ¨nements du programme
+//Les ÃƒÂ©vÃƒÂ¨nements du programme
 SDL_Event evenements;
-//La mÃ©moire vidÃ©o contenant le fond du jeu
+//La mÃƒÂ©moire vidÃƒÂ©o contenant le fond du jeu
 SDL_Surface *Background;
 //La destination de la copie du fond
 SDL_Rect rect;
@@ -66,7 +66,7 @@ int matrice_jeu[12][23];
 int l,h ;
 int largeur=12;
 int hauteur = 23 ;
- //Les 7 différents carrés
+ //Les 7 diffÃ©rents carrÃ©s
 SDL_Surface *tetramino[7];
 
 
@@ -83,7 +83,7 @@ int Init( void )
 {
   if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1 )
     {
-      printf( "Echec lors du chargement de la vidÃ©o : %s", SDL_GetError() );
+      printf( "Echec lors du chargement de la vidÃƒÂ©o : %s", SDL_GetError() );
       SDL_Quit();
     }
   else
@@ -123,49 +123,49 @@ void charger_images(void)
   //icone du jeu
   ico = SDL_LoadBMP("images/ico.png");
 
-  //image du carré rouge
+  //image du carrÃ© rouge
   tetramino[0] = SDL_LoadBMP ("images/rouge.bmp");
   if (tetramino[0] == NULL)
     {
       printf("Probleme de chargement du fichier : %s\n", SDL_GetError());
       exit(-1);
     }
-  //image du carré bleuclaire
+  //image du carrÃ© bleuclaire
   tetramino[1] = SDL_LoadBMP ("images/bleuc.bmp");
   if (tetramino[1] == NULL)
     {
       printf("Probleme de chargement du fichier : %s\n", SDL_GetError());
       exit(-2);
     }
-  //image du carré vert
+  //image du carrÃ© vert
   tetramino[2] = SDL_LoadBMP ("images/vert.bmp");
   if (tetramino[2] == NULL)
     {
       printf("Probleme de chargement du fichier : %s\n", SDL_GetError());
       exit(-3);
     }
-  //image du carré violet
+  //image du carrÃ© violet
   tetramino[3] = SDL_LoadBMP ("images/violet.bmp");
   if (tetramino[3] == NULL)
     {
       printf("Probleme de chargement du fichier : %s\n", SDL_GetError());
       exit(-4);
     }
-  //image du carré bleu
+  //image du carrÃ© bleu
   tetramino[4] = SDL_LoadBMP ("images/bleu.bmp");
   if (tetramino[4] == NULL)
     {
       printf("Probleme de chargement du fichier : %s\n", SDL_GetError());
       exit(-5);
     }
-  //image du carré brun
+  //image du carrÃ© brun
   tetramino[5] = SDL_LoadBMP ("images/brun.bmp");
   if (tetramino[5] == NULL)
     {
       printf("Probleme de chargement du fichier : %s\n", SDL_GetError());
       exit(-6);
     }
-  //image du carré jaune
+  //image du carrÃ© jaune
   tetramino[6] = SDL_LoadBMP ("images/jaune.bmp");
   if (tetramino[6] == NULL)
     {
@@ -214,7 +214,7 @@ void Frame( void )
          
 	  break;
 	case SDL_QUIT:
-	  TTF_CloseFont(police); /* Doit Ãªtre avant TTF_Quit() */
+	  TTF_CloseFont(police); /* Doit ÃƒÂªtre avant TTF_Quit() */
 	  TTF_Quit(); 
 	  free_surface();
 	  SDL_Quit();
@@ -233,7 +233,7 @@ int Init_ttf( void )
     }
 }
 int charger_police( void ){
-  //On charge  la police Ã  utiliser
+  //On charge  la police ÃƒÂ  utiliser
   police = TTF_OpenFont ("ttf/DIGIT-LCD.ttf", 32);
   if (police == NULL)
     {
@@ -352,7 +352,7 @@ void creer_tetramino(void)
   switch (jeu_tetramino) 
     {
     case 0: 
-      //Pièce constituée de 4 carrés placés en carré 
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en carrÃ© 
       //au milieu et en bas de la zone du haut 
       matrice_jeu[5][0] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
@@ -361,7 +361,7 @@ void creer_tetramino(void)
       break; 
 
     case 1:
-      //Pièce constituée de 4 carrés placés en ligne
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en ligne
 	       
       matrice_jeu[4][0] = jeu_tetramino + 1;
       matrice_jeu[5][0] = jeu_tetramino + 1;
@@ -370,7 +370,7 @@ void creer_tetramino(void)
       break;
 
     case 2:
-      //Pièce constituée de 4 carrés placés en T
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en T
 	       
       matrice_jeu[5][0] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
@@ -379,7 +379,7 @@ void creer_tetramino(void)
       break;
 
     case 3:
-      //Pièce constituée de 4 carrés placés en l
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en l
 	       
       matrice_jeu[5][0] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
@@ -387,7 +387,7 @@ void creer_tetramino(void)
       matrice_jeu[6][2] = jeu_tetramino + 1 ;
       break;
     case 4:
-      //Pièce constituée de 4 carrés placés en l invere
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en l invere
 	       
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
       matrice_jeu[6][1] = jeu_tetramino + 1 ;
@@ -397,7 +397,7 @@ void creer_tetramino(void)
 
 
     case 5:
-      //Pièce constituée de 4 carrés placés en S
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en S
 	       
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
       matrice_jeu[6][1] = jeu_tetramino + 1 ;
@@ -405,7 +405,7 @@ void creer_tetramino(void)
       matrice_jeu[7][0] = jeu_tetramino + 1 ;
       break;
     case 6:
-      //Pièce constituée de 4 carrés placés en S inverce
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en S inverce
 	       
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
       matrice_jeu[7][0] = jeu_tetramino + 1 ;
@@ -464,12 +464,12 @@ void creer_matrice_jeu(void)
 	}
     }
   //On initialise la ligne du bas
-  //Pour chaque colonne de la première ligne
+  //Pour chaque colonne de la premiÃ¨re ligne
   for (l=0;l<largeur;l++)
     {
       matrice_jeu[l][hauteur-1] = 255; 
     }
-  //On initialise les deux colonnes sur les côtés
+  //On initialise les deux colonnes sur les cÃ´tÃ©s
   for (h=0;h<hauteur;h++)
     {
       matrice_jeu[0][h] = 255;
@@ -488,7 +488,7 @@ void afficher_futur_tetramino()
   switch (future_tetramino)
     {
     case 0:
-      //Pièce constituée de 4 carrés placés en carré
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en carrÃ©
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -503,7 +503,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 1:
-      //Pièce constituée de 4 carrés placés en ligne droite
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en ligne droite
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -518,7 +518,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 2:
-      //Pièce constituée de 4 carrés placés en L sur la gauche
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en L sur la gauche
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*1);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -533,7 +533,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 3:
-      //Pièce constituée de 4 carrés placés en L sur la droite
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en L sur la droite
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -548,7 +548,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 4:
-      //Pièce constituée de 4 carrés placés en T
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en T
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -563,7 +563,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 5:
-      //Pièce constituée de 4 carrés placés en S à plat
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en S Ã  plat
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -578,7 +578,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 6:
-      //Pièce constituée de 4 carrés placés en S à plat dans l'autre sens
+      //PiÃ¨ce constituÃ©e de 4 carrÃ©s placÃ©s en S Ã  plat dans l'autre sens
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*1);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -626,14 +626,15 @@ void afficher_matrice_jeu ()
 
 void chute_tetramino(void)
 { int i,j;
-			for (i=-hauteur+1;i<0;i++)
-		{
-			for (j=1;j<(largeur-1);j++)
-			{
-							if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0)
-				{
-										matrice_jeu[j][i-1] = matrice_jeu[j][i];
-								matrice_jeu[j][i] = 0;
-				}
-			}
-		}}
+	for (i=-hauteur+1;i<0;i++)
+	{
+	for (j=1;j<(largeur-1);j++)
+	{
+	if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0)
+	{
+	matrice_jeu[j][i-1] = matrice_jeu[j][i];
+	matrice_jeu[j][i] = 0;
+	}
+	}
+	}
+}
