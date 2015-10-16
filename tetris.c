@@ -4,7 +4,7 @@
 //Pour utiliser la SDL
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <SDL_mixer.h>
+//#include <SDL_mixer.h>
 
 //d√©finition des fonctions utilis√©es par la suite
 int Init( void );
@@ -30,7 +30,8 @@ void afficher_matrice_jeu (void);
 Uint32 chute_tetramino(Uint32 intervalle, void *param);
 void chute_du_tetramino(void);
 void nouveau_score (int ok);
-
+void deplacementgauche();
+void deplacementdroite();
 //La m√©moire vid√©o contenant ce qui s'affiche
 SDL_Surface *ecran;
 //Les √©v√®nements du programme
@@ -78,20 +79,20 @@ int intervalle=1000;
 SDL_TimerID timer_chute;
 
 //The music that will be played
-Mix_Music *music = NULL;
+//Mix_Music *music = NULL;
 
-//The sound effects that will be used
+/*//The sound effects that will be used
 Mix_Chunk *scratch = NULL;
 Mix_Chunk *high = NULL;
 Mix_Chunk *med = NULL;
-Mix_Chunk *low = NULL;
+Mix_Chunk *low = NULL;*/
 int fin_partie = 0;
 
 //Le niveau de jeu
 int niveau=1;
 //Le score lui-mÍme
 int score=0;
- int best_score = 400;
+int best_score = 400;
 
 
 int main( int argc, char* argv[] )
@@ -122,17 +123,20 @@ int Init( void )
 	  // SDL_ShowCursor(SDL_DISABLE);
 	  //On charge les images du jeu
 	  charger_images();
- //Initialize SDL_mixer
- if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
+	  //Initialize SDL_mixer
 
-{
+	  /*-----------------------MUSIQUE--------------------*/
 
-   printf("%s", Mix_GetError());
+	  /* if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
 
-}
+	    {
 
-music = Mix_LoadMUS("musiques/tetris.ogx");
-Mix_PlayMusic(music, -1);
+	      printf("%s", Mix_GetError());
+
+	    }
+
+	   music = Mix_LoadMUS("musiques/tetris.ogx");
+	   Mix_PlayMusic(music, -1);*/
           // une icone pour windows
 	  SDL_WM_SetIcon(ico,NULL);
 	  //On initialise la police du jeu
@@ -146,9 +150,9 @@ Mix_PlayMusic(music, -1);
    
 	  return 1;}
       else
-Mix_FreeMusic(music); 
-        Mix_CloseAudio(); //Fermeture de l'API
-	SDL_Quit();
+	//Mix_FreeMusic(music); 
+	// Mix_CloseAudio(); //Fermeture de l'API
+      SDL_Quit();
     }
   return 0;
 }
@@ -157,9 +161,10 @@ Mix_FreeMusic(music);
 int Frame( void )
 {
   int continuer = 1; 
-  SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+  
 
   Draw();
+  SDL_EnableKeyRepeat(500,50);
   timer_chute = SDL_AddTimer(1000, chute_tetramino, NULL);	
   while(continuer)
 
@@ -169,7 +174,8 @@ int Frame( void )
       SDL_WaitEvent(&evenements);
 
 
-      switch(evenements.type)
+      switch(evenements.type) 
+
 
         {
 
@@ -182,13 +188,27 @@ int Frame( void )
 
 	  // En appuyant sur une touche, on quitte le programme
 
-	case SDL_KEYDOWN:
+	case SDL_KEYDOWN :
 
-	  continuer = 0;
+	  switch (evenements.key.keysym.sym)
+	    {
+	    case SDLK_ESCAPE:
+	      continuer = 0 ;
+	      break;
+	      
+	    case SDLK_LEFT:
+	      deplacementgauche();
+	      break;
 
-	  break;
+	    case SDLK_RIGHT:
+	      deplacementdroite();
+	      break;
+	    case SDLK_DOWN:
+	     chute_du_tetramino();
+	     break;
 
         }
+	}
       SDL_Flip(ecran);
     }
 
@@ -407,7 +427,7 @@ void creer_tetramino(void)
     {
     case 0: 
       // en carrÈ 
-     matrice_jeu[5][0] = jeu_tetramino + 1 ;
+      matrice_jeu[5][0] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
       matrice_jeu[6][1] = jeu_tetramino + 1;
@@ -415,7 +435,7 @@ void creer_tetramino(void)
 
     case 1:
       // en ligne
-       matrice_jeu[4][0] = jeu_tetramino + 1;
+      matrice_jeu[4][0] = jeu_tetramino + 1;
       matrice_jeu[5][0] = jeu_tetramino + 1;
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
       matrice_jeu[7][0] = jeu_tetramino + 1 ;
@@ -661,7 +681,7 @@ void afficher_matrice_jeu ()
   rect.y = 0;
 
   // on recharge l image de fond
-   SDL_BlitSurface (Background, NULL, ecran, &rect);
+  SDL_BlitSurface (Background, NULL, ecran, &rect);
 
   for (i=0;i<hauteur-1;i++)
     {
@@ -671,17 +691,17 @@ void afficher_matrice_jeu ()
 	    {
 	      rect.x = decalage_x + (px*j);
 	      rect.y = decalage_y + (px*i);
-	if (matrice_jeu[j][i]>10)
-				{
-					//Affichage d'un carrÈ fixe
-					SDL_BlitSurface (tetramino[matrice_jeu[j][i]-51], NULL, ecran, &rect);
-				}
-	else{					
+	      if (matrice_jeu[j][i]>10)
+		{
+		  //Affichage d'un carrÈ fixe
+		  SDL_BlitSurface (tetramino[matrice_jeu[j][i]-51], NULL, ecran, &rect);
+		}
+	      else{					
 	     
-	      SDL_BlitSurface (tetramino[matrice_jeu[j][i]-1], NULL, ecran, &rect);
+		SDL_BlitSurface (tetramino[matrice_jeu[j][i]-1], NULL, ecran, &rect);
+	      }
 	    }
 	}
-    }
     }
   afficher_niveau ();
   afficher_timer();
@@ -699,20 +719,20 @@ void chute_du_tetramino(void)
   int chute_possible;
   chute_possible = 1;
   // tester si chute possible
-for (i=21;i>=0 && chute_possible;i--)
-	{
+  for (i=21;i>=0 && chute_possible;i--)
+    {
 	
-		for (j=1;j<11 && chute_possible;j++)
-		{
-			if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0 )
-			{
-			    if (matrice_jeu[j][i] < matrice_jeu[j][i+1])
-				{   
-			  chute_possible = 0;
-				}
-			}
+      for (j=1;j<11 && chute_possible;j++)
+	{
+	  if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0 )
+	    {
+	      if (matrice_jeu[j][i] < matrice_jeu[j][i+1])
+		{   
+		  chute_possible = 0;
 		}
+	    }
 	}
+    }
   if (chute_possible){
 
     for (i=21;i>=0 && chute_possible ;i--)
@@ -726,36 +746,36 @@ for (i=21;i>=0 && chute_possible;i--)
 	      }
 	  }
       }
-}
+  }
 
-else
+  else
+    {
+
+      for (i=23;i>=0;i--)
 	{
-
-	  for (i=23;i>=0;i--)
-		{
 		
-			for (j=1;j<11;j++)
-			{
+	  for (j=1;j<11;j++)
+	    {
 			
-				if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0)
-				{
+	      if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0)
+		{
 					
-					matrice_jeu[j][i] = matrice_jeu[j][i] + 50;
+		  matrice_jeu[j][i] = matrice_jeu[j][i] + 50;
 				
-				if (i<=2)
-					{
-					  // a revoir
-						for (i=0;i<22;i++)
-					  for (j=1;j<11;j++)
-					  	matrice_jeu[j][i] = 0;
-						fin_partie = 0;
-					}
-				}
-			}
+		  if (i<=2)
+		    {
+		      // a revoir
+		      for (i=0;i<22;i++)
+			for (j=1;j<11;j++)
+			  matrice_jeu[j][i] = 0;
+		      fin_partie = 0;
+		    }
 		}
-	  creer_tetramino() ;
-nouveau_score (1);
+	    }
 	}
+      creer_tetramino() ;
+      nouveau_score (1);
+    }
   verif_tableau (12 ,23 ,matrice_jeu);
 
   afficher_matrice_jeu();
@@ -772,16 +792,101 @@ Uint32 chute_tetramino (Uint32 intervalle, void *param)
 }
 void nouveau_score (int ok)
 {
-	switch (ok)
-	{
-	case 1 :
+  switch (ok)
+    {
+    case 1 :
 		
-		score += niveau;
-		break;
+      score += niveau;
+      break;
 
-	default :
+    default :
 	
-		break;
-	}
+      break;
+    }
 
 }
+
+void deplacementgauche(){
+
+  int i,j;
+  int gauche_possible;
+  gauche_possible = 1;
+  // tester si deplacement gauche est possible
+ for (i=21;i>=0 && gauche_possible;i--)
+    {
+  for (j=1;j<11 && gauche_possible;j++)
+    {
+      if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0 )
+	{
+	  if (matrice_jeu[j][i] < matrice_jeu[j-1][i])
+	    {  
+	      // gauche_possible = 0;
+	    }
+	}
+    }
+    }
+
+  if (gauche_possible){
+
+    for (i=21;i>=0 && gauche_possible ;i--)
+      {
+	for (j=1;j<11&& gauche_possible;j++)
+	  {
+	    if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0)
+	      {
+		matrice_jeu[j-1][i] = matrice_jeu[j][i];
+		matrice_jeu[j][i] = 0;
+
+	      }
+	  }
+      }
+  }
+
+  verif_tableau (12 ,23 ,matrice_jeu);
+
+  afficher_matrice_jeu();
+}
+
+
+void deplacementdroite(){
+
+  int i,j;
+  int droite_possible;
+  droite_possible = 1;
+  // tester si deplacement droite est possible
+ for (i=21;i>=0 && droite_possible;i--)
+    {
+  for (j=1;j<11 && droite_possible;j++)
+    {
+      if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0 )
+	{
+	  if (matrice_jeu[j][i] < matrice_jeu[j][i])
+	    {  
+	      //  droite_possible = 0;
+	    }
+	}
+    }
+    }
+
+  if (droite_possible){
+
+    for (i=21;i>=0 && droite_possible ;i--)
+      {
+	for (j=11;j>=1 && droite_possible;j--)
+	  {
+	    if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0)
+	      {
+		matrice_jeu[j+1][i] = matrice_jeu[j][i];
+		matrice_jeu[j][i] = 0;
+
+	      }
+	  }
+      }
+  }
+
+  verif_tableau (12 ,23 ,matrice_jeu);
+
+  afficher_matrice_jeu();
+}
+
+
