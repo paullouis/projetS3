@@ -4,6 +4,7 @@
 //Pour utiliser la SDL
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 //dÃ©finition des fonctions utilisÃ©es par la suite
 int Init( void );
@@ -28,7 +29,7 @@ void afficher_futur_tetramino(void);
 void afficher_matrice_jeu (void);
 Uint32 chute_tetramino(Uint32 intervalle, void *param);
 void chute_du_tetramino(void);
-
+void nouveau_score (int ok);
 
 //La mÃ©moire vidÃ©o contenant ce qui s'affiche
 SDL_Surface *ecran;
@@ -76,6 +77,21 @@ int intervalle=1000;
 //Le timer pour la chute
 SDL_TimerID timer_chute;
 
+//The music that will be played
+Mix_Music *music = NULL;
+
+//The sound effects that will be used
+Mix_Chunk *scratch = NULL;
+Mix_Chunk *high = NULL;
+Mix_Chunk *med = NULL;
+Mix_Chunk *low = NULL;
+int fin_partie = 0;
+
+//Le niveau de jeu
+int niveau=1;
+//Le score lui-même
+int score=0;
+ int best_score = 400;
 
 
 int main( int argc, char* argv[] )
@@ -95,6 +111,7 @@ int Init( void )
       printf( "Echec lors du chargement de la vidÃ©o : %s", SDL_GetError() );
       SDL_Quit();
     }
+
   else
     {
       if ( ecran = SDL_SetVideoMode( 640, 480, 16, SDL_HWSURFACE | SDL_DOUBLEBUF ) )
@@ -105,16 +122,32 @@ int Init( void )
 	  // SDL_ShowCursor(SDL_DISABLE);
 	  //On charge les images du jeu
 	  charger_images();
+ //Initialize SDL_mixer
+ if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
+
+{
+
+   printf("%s", Mix_GetError());
+
+}
+
+music = Mix_LoadMUS("musiques/tetris.ogx");
+Mix_PlayMusic(music, -1);
           // une icone pour windows
 	  SDL_WM_SetIcon(ico,NULL);
 	  //On initialise la police du jeu
 	  Init_ttf();
           //On charge la police du jeu
           charger_police();
+
+            
+
 	  future_tetramino=hazard();
    
 	  return 1;}
       else
+Mix_FreeMusic(music); 
+        Mix_CloseAudio(); //Fermeture de l'API
 	SDL_Quit();
     }
   return 0;
@@ -276,7 +309,7 @@ int charger_police( void ){
 void afficher_niveau (void)
 {
   char chaine_niveau[3];
-  int niveau = 7;
+ 
 
   sprintf (chaine_niveau, "%d",niveau ) ;
   surface_niveau = TTF_RenderText_Solid (police,chaine_niveau , GREEN);
@@ -318,7 +351,7 @@ void afficher_timer (void)
   
 void afficher_score(void){
   char chaine_score [5];
-  int score = 350;
+ 
   sprintf ( chaine_score, "%d", score);
   surface_score = TTF_RenderText_Solid ( police,chaine_score , GREEN);
   if(surface_score){
@@ -331,7 +364,7 @@ void afficher_score(void){
 void afficher_best_score(void)
 { // a faire lire le melleur score dans un fichier  afficher  si score actuel sup mettre a jour l'enregistrement et l affichage
   char chaine_best_score [5];
-  int best_score = 400;
+  
   sprintf ( chaine_best_score, "%d", best_score);
   surface_best_score = TTF_RenderText_Solid ( police,chaine_best_score ,GREEN);
   if(surface_best_score){
@@ -373,63 +406,61 @@ void creer_tetramino(void)
   switch (jeu_tetramino) 
     {
     case 0: 
-      //Pièce constituée de 4 carrés placés en carré 
-      //au milieu et en bas de la zone du haut 
-      matrice_jeu[5][0] = jeu_tetramino + 1 ;
+      // en carré 
+     matrice_jeu[5][0] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
       matrice_jeu[6][1] = jeu_tetramino + 1;
       break; 
 
     case 1:
-      //Pièce constituée de 4 carrés placés en ligne
-	       
-      matrice_jeu[4][0] = jeu_tetramino + 1;
+      // en ligne
+       matrice_jeu[4][0] = jeu_tetramino + 1;
       matrice_jeu[5][0] = jeu_tetramino + 1;
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
       matrice_jeu[7][0] = jeu_tetramino + 1 ;
       break;
 
     case 2:
-      //Pièce constituée de 4 carrés placés en T
+      // en |_
 	       
-      matrice_jeu[5][0] = jeu_tetramino + 1 ;
+      matrice_jeu[4][0] = jeu_tetramino + 1 ;
+      matrice_jeu[4][1] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
-      matrice_jeu[5][2] = jeu_tetramino + 1 ;
       matrice_jeu[6][1] = jeu_tetramino + 1 ;
       break;
 
     case 3:
-      //Pièce constituée de 4 carrés placés en l
+      // en _|
 	       
-      matrice_jeu[5][0] = jeu_tetramino + 1 ;
-      matrice_jeu[5][1] = jeu_tetramino + 1 ;
+      matrice_jeu[4][2] = jeu_tetramino + 1 ;
       matrice_jeu[5][2] = jeu_tetramino + 1 ;
       matrice_jeu[6][2] = jeu_tetramino + 1 ;
+      matrice_jeu[6][1] = jeu_tetramino + 1 ;
       break;
     case 4:
-      //Pièce constituée de 4 carrés placés en l invere
+      //en T
 	       
+      matrice_jeu[4][0] = jeu_tetramino + 1 ;
+      matrice_jeu[5][0] = jeu_tetramino + 1 ;
+      matrice_jeu[5][1] = jeu_tetramino + 1 ;
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
-      matrice_jeu[6][1] = jeu_tetramino + 1 ;
-      matrice_jeu[6][2] = jeu_tetramino + 1 ;
-      matrice_jeu[5][2] = jeu_tetramino + 1 ;
       break;
 
 
     case 5:
-      //Pièce constituée de 4 carrés placés en S
+      // en _|-
 	       
+      matrice_jeu[4][1] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
-      matrice_jeu[6][1] = jeu_tetramino + 1 ;
+      matrice_jeu[5][0] = jeu_tetramino + 1 ;
       matrice_jeu[6][0] = jeu_tetramino + 1 ;
-      matrice_jeu[7][0] = jeu_tetramino + 1 ;
       break;
     case 6:
-      //Pièce constituée de 4 carrés placés en S inverce
+      //en -|_
 	       
-      matrice_jeu[6][0] = jeu_tetramino + 1 ;
-      matrice_jeu[7][0] = jeu_tetramino + 1 ;
+      matrice_jeu[4][0] = jeu_tetramino + 1 ;
+      matrice_jeu[5][0] = jeu_tetramino + 1 ;
       matrice_jeu[5][1] = jeu_tetramino + 1 ;
       matrice_jeu[6][1] = jeu_tetramino + 1 ;
       break;
@@ -504,12 +535,12 @@ void afficher_futur_tetramino()
 {
   int d_x = 400;
   int d_y = 50;
-  int px = 16;
+  int px = 20;
 	
   switch (future_tetramino)
     {
     case 0:
-      //Pièce constituée de 4 carrés placés en carré
+      //en carré
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -524,7 +555,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 1:
-      //Pièce constituée de 4 carrés placés en ligne droite
+      //en ligne droite
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -539,7 +570,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 2:
-      //Pièce constituée de 4 carrés placés en L sur la gauche
+      // en L
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*1);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -554,7 +585,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 3:
-      //Pièce constituée de 4 carrés placés en L sur la droite
+      //en _|
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -569,22 +600,22 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 4:
-      //Pièce constituée de 4 carrés placés en T
+      //en T
       rect.x = d_x + (px*1);
-      rect.y = d_y + (px*2);
-      SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
-      rect.x = d_x + (px*2);
-      rect.y = d_y + (px*2);
+      rect.y = d_y + (px*1);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       rect.x = d_x + (px*2);
       rect.y = d_y + (px*1);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
-      rect.x = d_x + (px*3);
+      rect.x = d_x + (px*2);
       rect.y = d_y + (px*2);
+      SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
+      rect.x = d_x + (px*3);
+      rect.y = d_y + (px*1);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 5:
-      //Pièce constituée de 4 carrés placés en S à plat
+      // en _|-
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*2);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -599,7 +630,7 @@ void afficher_futur_tetramino()
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
       break;
     case 6:
-      //Pièce constituée de 4 carrés placés en S à plat dans l'autre sens
+      //en -|_
       rect.x = d_x + (px*1);
       rect.y = d_y + (px*1);
       SDL_BlitSurface (tetramino[future_tetramino], NULL, ecran, &rect);
@@ -624,11 +655,13 @@ void afficher_matrice_jeu ()
   int i;
   int j;
   int decalage_x = (640-(12*16))/2;
-  int decalage_y = 50;
-  int px = 16;
+  int decalage_y = 20;
+  int px = 20;
   rect.x = 0;
   rect.y = 0;
-  SDL_BlitSurface (Background, NULL, ecran, &rect);
+
+  // on recharge l image de fond
+   SDL_BlitSurface (Background, NULL, ecran, &rect);
 
   for (i=0;i<hauteur-1;i++)
     {
@@ -638,13 +671,18 @@ void afficher_matrice_jeu ()
 	    {
 	      rect.x = decalage_x + (px*j);
 	      rect.y = decalage_y + (px*i);
-						
+	if (matrice_jeu[j][i]>10)
+				{
+					//Affichage d'un carré fixe
+					SDL_BlitSurface (tetramino[matrice_jeu[j][i]-51], NULL, ecran, &rect);
+				}
+	else{					
 	     
 	      SDL_BlitSurface (tetramino[matrice_jeu[j][i]-1], NULL, ecran, &rect);
 	    }
 	}
     }
-
+    }
   afficher_niveau ();
   afficher_timer();
   afficher_score();
@@ -689,6 +727,35 @@ for (i=21;i>=0 && chute_possible;i--)
 	  }
       }
 }
+
+else
+	{
+
+	  for (i=23;i>=0;i--)
+		{
+		
+			for (j=1;j<11;j++)
+			{
+			
+				if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0)
+				{
+					
+					matrice_jeu[j][i] = matrice_jeu[j][i] + 50;
+				
+				if (i<=2)
+					{
+					  // a revoir
+						for (i=0;i<22;i++)
+					  for (j=1;j<11;j++)
+					  	matrice_jeu[j][i] = 0;
+						fin_partie = 0;
+					}
+				}
+			}
+		}
+	  creer_tetramino() ;
+nouveau_score (1);
+	}
   verif_tableau (12 ,23 ,matrice_jeu);
 
   afficher_matrice_jeu();
@@ -702,4 +769,19 @@ Uint32 chute_tetramino (Uint32 intervalle, void *param)
   chute_du_tetramino();
 
   return intervalle;
+}
+void nouveau_score (int ok)
+{
+	switch (ok)
+	{
+	case 1 :
+		
+		score += niveau;
+		break;
+
+	default :
+	
+		break;
+	}
+
 }
