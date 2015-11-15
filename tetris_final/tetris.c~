@@ -1,0 +1,76 @@
+/*
+teris.c
+------
+
+Par 
+
+Rôle : menu du jeu. 
+*/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+
+#include "constantes.h"
+#include "jeu_tetris.h"
+
+int main(int argc, char *argv[])
+{
+    SDL_Surface *ecran = NULL, *Menu = NULL, *Background = NULL;
+    SDL_Rect positionBackground;
+    SDL_Rect positionMenu;
+    SDL_Event event;
+
+    int continuer = 1;
+
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+
+    SDL_WM_SetIcon(IMG_Load("images/ico.png"), NULL); // L'icône doit être chargée avant SDL_SetVideoMode
+    ecran = SDL_SetVideoMode(LARGEUR_FENETRE, HAUTEUR_FENETRE, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Tetris", NULL);
+
+    Background = IMG_Load("images/Background.png");
+    positionBackground.x = 0;
+    positionBackground.y = 0;
+    Menu = IMG_Load("images/menu.jpg");
+    SDL_SetColorKey(Menu, SDL_SRCCOLORKEY, SDL_MapRGB(Menu->format, 0,0,0));
+    positionMenu.x = (LARGEUR_FENETRE-400)/2;
+    positionMenu.y = (HAUTEUR_FENETRE-400)/2;
+
+    while (continuer)
+    {
+        SDL_WaitEvent(&event);
+        switch(event.type)
+        {
+            case SDL_QUIT:
+                continuer = 0;
+                break;
+            case SDL_KEYDOWN:
+                switch(event.key.keysym.sym)
+                {
+                    case SDLK_ESCAPE: // Veut arrêter le jeu
+                        continuer = 0;
+                        break;
+                    case SDLK_KP1: // Demande à jouer
+                       jouer(ecran);
+                        break;
+                    ;
+                }
+                break;
+        }
+
+        // Effacement de l'écran
+        SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+        SDL_BlitSurface(Background, NULL, ecran, &positionBackground);
+        SDL_BlitSurface(Menu, NULL, ecran, &positionMenu);
+        SDL_Flip(ecran);
+    }
+
+    SDL_FreeSurface(Menu);
+    SDL_FreeSurface(Background);
+    SDL_FreeSurface(ecran);
+    SDL_Quit();
+
+    return EXIT_SUCCESS;
+}
