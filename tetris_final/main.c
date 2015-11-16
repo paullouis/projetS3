@@ -3,7 +3,7 @@
   ------
   Par Paul ROBIN et Louis DUDOT
 
-  Rôle : ecran d'accueil
+  RÃ´le : ecran d'accueil
 */
 
 #include <stdlib.h>
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     }
 
   int continuer = 1;
-
+  // lecture des images
   ico = IMG_Load("images/ico.png"); Background = IMG_Load("images/backgroud.jpg"); Menu = IMG_Load("images/menu.png");
 
   if( ( ico == NULL ) || ( Background == NULL ) || ( Menu == NULL ) ){ 
@@ -39,14 +39,14 @@ int main(int argc, char *argv[])
     printf( "Echec lors du chargement de la video : %s", SDL_GetError() );
     SDL_Quit();
   }
-  SDL_WM_SetIcon(ico, NULL); // L'icône doit être chargée avant SDL_SetVideoMode
+  SDL_WM_SetIcon(ico, NULL); // L'icÃ´ne doit Ãªtre chargÃ©e avant SDL_SetVideoMode
   ecran = SDL_SetVideoMode(LARGEUR_FENETRE, HAUTEUR_FENETRE, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
   SDL_WM_SetCaption("Tetris Clone", NULL);
   SDL_ShowCursor(SDL_DISABLE);
  
   positionBackground.x = 0;
   positionBackground.y = 0;
- 
+  // pas besoin car png et SDL_image.h
   /* SDL_SetColorKey(Menu, SDL_SRCCOLORKEY, SDL_MapRGB(Menu->format, 0,0,0)); */
 
   positionMenu.x = 30;
@@ -66,20 +66,20 @@ int main(int argc, char *argv[])
 	    case SDLK_ESCAPE: // Veut sortir
 	      continuer = 0;
 	      break;
-	    case SDLK_j: // Demande à jouer
+	    case SDLK_j: // Demande Ã  jouer
 	      jouer(ecran);
 	      break;
 	    }
 	  break;
         }
 
-      // Effacement de l'écran puis affichage
+      // Effacement de l'Ã©cran puis affichage
       SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
       SDL_BlitSurface(Background, NULL, ecran, &positionBackground);
       SDL_BlitSurface(Menu, NULL, ecran, &positionMenu);
       SDL_Flip(ecran);
     }
-  // Libération des surfaces chargées
+  // LibÃ©ration des surfaces chargÃ©es et de l audio
 
   SDL_FreeSurface(Menu);
   SDL_FreeSurface(Background);
