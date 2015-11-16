@@ -21,11 +21,8 @@
 int future_Tetramino,jeu_tetramino,compteur,suite,rotation,score,niveau,best_score,nbr_ligne, rythme,time,continuer,jeu_pas_fini,explose,stop,volume_son,volume_musique;
 Uint32 timer,timer2;
 
-<<<<<<< HEAD
 // structure qui stoque les touches préssées
-=======
-// structure qui stoque les touches prÃ©ssÃ©es
->>>>>>> df0958b6b0c59eb8298b72d25272a262ebddf483
+
 typedef struct{
   char key[SDLK_LAST];
   char quit;
@@ -262,11 +259,9 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
       continuer=0;}
     SDL_Flip(ecran);
   }
-<<<<<<< HEAD
+
   // Libération des surfaces chargées des polices des son et de la musique
-=======
-  // LibÃ©ration des surfaces chargÃ©es des polices des son et de la musique
->>>>>>> df0958b6b0c59eb8298b72d25272a262ebddf483
+
   TTF_Quit();
   SDL_FreeSurface(Background2);
   SDL_FreeSurface(surface_niveau);
@@ -453,7 +448,7 @@ void creer_matrice_jeu(int i ,int j,int matrice_jeu[i][j]){
   for (l=0;l<NB_BLOCS_LARGEUR;l++){
     matrice_jeu[l][NB_BLOCS_HAUTEUR-1] = 255; 
   }
-  //On initialise les deux colonnes sur les cÃ´tÃ©s
+  //On initialise les deux colonnes sur les bords
   for (h=0;h<NB_BLOCS_HAUTEUR;h++){
     matrice_jeu[0][h] = 255;
     matrice_jeu[11][h] = 255;
@@ -556,11 +551,9 @@ void afficher_matrice_jeu (int l ,int h ,int  matrice_jeu[l][h],SDL_Rect positio
 	positionTetramino.x = decalage_x + (px*j);
 	positionTetramino.y = decalage_y + (px*i);
 	if (matrice_jeu[j][i]>10){
-<<<<<<< HEAD
+
 	  //Affichage d'un carré fixé
-=======
-	  //Affichage d'un carrÃ© fixÃ©
->>>>>>> df0958b6b0c59eb8298b72d25272a262ebddf483
+
 	  SDL_BlitSurface (Tetramino[matrice_jeu[j][i]-11], NULL, ecran, &positionTetramino);
 	}
 	else{						     
@@ -637,11 +630,9 @@ void tourner_piece (int l ,int h ,int  matrice_jeu[l][h]){
 	  break;
 	case 1:
 	  switch (rotation) { 
-<<<<<<< HEAD
+
 	  case 0: //On vérifie les cases a remplire
-=======
-	  case 0: //On vÃ©rifie les cases a remplire
->>>>>>> df0958b6b0c59eb8298b72d25272a262ebddf483
+
 	    if (matrice_jeu[j+2][i+2]==0 && matrice_jeu[j+2][i-1]==0 && matrice_jeu[j+2][i+1]==0){
 	      //Ok, on pivote et  on enregistre la nouvelle rotation							
 	      matrice_jeu[j+2][i+2] = matrice_jeu[j][i];
