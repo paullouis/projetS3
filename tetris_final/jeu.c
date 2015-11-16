@@ -1,12 +1,12 @@
+
 /*
   jeu.c
   -----
 
  Par Paul ROBIN et Louis DUDOT
 
-  RÙle : fonctions du jeu.
+  R√¥le : fonctions du jeu.
 */
-
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -15,11 +15,13 @@
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_mixer.h>
 #include "constantes.h"
-#include "jeu.h"
+#include "jeu.h" 
 
+// les variables 
 int future_Tetramino,jeu_tetramino,compteur,suite,rotation,score,niveau,best_score,nbr_ligne, rythme,time,continuer,jeu_pas_fini,explose,stop,volume_son,volume_musique;
 Uint32 timer,timer2;
 
+// structure qui stoque les touches pr√©ss√©es
 typedef struct{
   char key[SDLK_LAST];
   char quit;
@@ -46,16 +48,19 @@ void UpdateEvents(Input* in){
 
 void jouer(SDL_Surface* ecran){
   Input in;
+  // les surfaces
   SDL_Surface *Tetramino[7] = {NULL}, *Background2 = NULL,*surface_niveau = NULL,*surface_timer = NULL,*surface_score = NULL, *surface_best_score = NULL, *surface_nbr_ligne = NULL,*surface_perdu = NULL,*surface_aide = NULL ;
+  // musiqe et sons et police
   Mix_Music *musique = NULL;
   TTF_Font *police;
   Mix_Chunk *boum = NULL;
   Mix_Chunk *son_stop = NULL;
   Mix_Chunk *game_over = NULL;
+
   SDL_Rect positionBackground2, positionFuturTetramino,positionTetramino,pos_niveau,pos_timer,pos_score,pos_best_score,pos_nbr_ligne,pos_perdu,position_aide;
   SDL_Event event;
   SDL_Color Vert = {0,255,0};
-
+  // lecture des sons et musique
   musique = Mix_LoadMUS("musiques/tetris.ogx");
   boum = Mix_LoadWAV("musiques/boum.wav");
   son_stop = Mix_LoadWAV("musiques/stop.wav");
@@ -64,6 +69,7 @@ if(  musique == NULL || boum == NULL||son_stop == NULL ||son_stop == NULL) {
  printf("Probleme de chargement ressourse son ou musique");
     SDL_Quit();  
 }
+// reglages sons et musique
   volume_musique=50;
   Mix_VolumeMusic(volume_musique);
   Mix_PlayMusic(musique, -1);
@@ -77,21 +83,22 @@ if(  musique == NULL || boum == NULL||son_stop == NULL ||son_stop == NULL) {
     printf("Impossible d'initialiser la librairie SDL_ttf : %s\n", TTF_GetError());
   SDL_Quit();
   }
+  // charger la police
   police = TTF_OpenFont ("ttf/DIGIT-LCD.ttf", 32);
   if (police == NULL){
     printf("Impossible de charger la police : %s\n", TTF_GetError());
   SDL_Quit();
   }
-
+  // generation d'un numero entre 0 et 6
   future_Tetramino = hazard();
- 
+  // charger les images
   Background2 = IMG_Load("images/backgroud2.jpeg");
   surface_perdu = IMG_Load("images/perdue.png");
   surface_aide = IMG_Load("images/key.png");
 if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL ) ){ 
     printf("Probleme de chargement ressourse: %s\n", SDL_GetError());
     SDL_Quit(); } 
-
+// initialisation variable
   positionBackground2.x = 0;
   positionBackground2.y = 0;
   pos_perdu.x=160;
@@ -106,9 +113,10 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
   stop=0;
   volume_son=50;
   volume_musique=50;
-
+  // vitesse de chute en fonction du niveau
   if(niveau<=10){
     rythme=1000-(90*niveau);}
+  //lecture du score dans un fichier
   FILE* fichier = NULL;
   fichier = fopen("best_score.s", "r");
   if (fichier == NULL){
@@ -119,18 +127,20 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
     fscanf(fichier, "%d", &best_score);
     fclose(fichier);
   }
-
+  // charge les images du tetramino
   charger_images(Tetramino);
-  
+  // creer une matrice et la remplir
   int  matrice_jeu[NB_BLOCS_LARGEUR][NB_BLOCS_HAUTEUR] /* = {0} */;
   creer_matrice_jeu(NB_BLOCS_LARGEUR,NB_BLOCS_HAUTEUR,matrice_jeu);
   creer_tetramino(NB_BLOCS_LARGEUR ,NB_BLOCS_HAUTEUR,matrice_jeu);
+  // init des deux timer
   timer = SDL_GetTicks();
   timer2 = SDL_GetTicks();
   
   memset(&in,0,sizeof(in));
   while (continuer){
     UpdateEvents(&in);
+    // lecture des touches et actions
     if (in.key[SDLK_UP]){ 
       in.key[SDLK_UP] = 0; 
       tourner_piece (NB_BLOCS_LARGEUR ,NB_BLOCS_HAUTEUR,matrice_jeu);
@@ -189,15 +199,17 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
 	Mix_VolumeChunk(game_over,volume_son);
       }
     }
-   
+    // timeur de chute
     if (SDL_GetTicks()-timer>rythme && jeu_pas_fini){    
       in.key[SDLK_DOWN] = 1;    
       timer = SDL_GetTicks();
     }    
+    // pour le temps
     if (SDL_GetTicks()-timer2>1000) {
       time++;
       timer2 = SDL_GetTicks();
     }
+    // enreistrement meilleur score
     if (score>best_score){
       fichier = fopen("best_score.s", "w");
       if (fichier == NULL){
@@ -209,14 +221,16 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
 	fclose(fichier);
       }
     }
+    //son si ligne complete 
     if (explose){
       Mix_PlayChannel(-1,boum, 0); explose=0;
     }
+    // son jeu fini
     if (stop){
       Mix_PlayChannel(-1,son_stop, 0);
       stop=0;
     }
-
+    // affichages
     SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
     SDL_BlitSurface(Background2, NULL, ecran, &positionBackground2);
     afficher_futur_Tetramino(positionFuturTetramino,Tetramino,ecran );
@@ -226,12 +240,14 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
     afficher_niveau(Vert,police,pos_niveau,surface_niveau,ecran);
     afficher_best_score(Vert,police,pos_best_score,surface_best_score,ecran);
     afficher_matrice_jeu (NB_BLOCS_LARGEUR ,NB_BLOCS_HAUTEUR,matrice_jeu,positionTetramino,Tetramino,ecran );
+    //ecran d'aide
     if (in.key[SDLK_COMMA]||in.key[SDLK_QUESTION]){
       position_aide.x=0;
       position_aide.y=0;
       // bliter aide
       SDL_BlitSurface(surface_aide, NULL, ecran, &position_aide);
-    }
+    } 
+    // jeu fini 
     if(!jeu_pas_fini){
       Mix_HaltMusic();
       Mix_PlayChannel(-1,game_over, 0);
@@ -242,7 +258,7 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
       continuer=0;}
     SDL_Flip(ecran);
   }
-  // LibÈration des surfaces chargÈes
+  // Lib√©ration des surfaces charg√©es des polices des son et de la musique
   TTF_Quit();
   SDL_FreeSurface(Background2);
   SDL_FreeSurface(surface_niveau);
@@ -272,7 +288,7 @@ void afficher_futur_Tetramino(SDL_Rect positionFuturTetramino,SDL_Surface *Tetra
 	
   switch (future_Tetramino) {
   case 0:
-    //en carrÈ
+    //en carr√©
     positionFuturTetramino.x = d_x + (px*1);
     positionFuturTetramino.y = d_y + (px*2);
     SDL_BlitSurface (Tetramino[future_Tetramino], NULL, ecran, &positionFuturTetramino);
@@ -429,7 +445,7 @@ void creer_matrice_jeu(int i ,int j,int matrice_jeu[i][j]){
   for (l=0;l<NB_BLOCS_LARGEUR;l++){
     matrice_jeu[l][NB_BLOCS_HAUTEUR-1] = 255; 
   }
-  //On initialise les deux colonnes sur les cÙtÈs
+  //On initialise les deux colonnes sur les c√¥t√©s
   for (h=0;h<NB_BLOCS_HAUTEUR;h++){
     matrice_jeu[0][h] = 255;
     matrice_jeu[11][h] = 255;
@@ -459,11 +475,12 @@ void verif_matrice_jeu (int l ,int h ,int  matrice_jeu[l][h]){
     }
 }
 void creer_tetramino(int l ,int h ,int  matrice_jeu[l][h]){
+  // on initialise le tetramino de la matrice
   jeu_tetramino = future_Tetramino; 
   switch (jeu_tetramino)
     {
     case 0:
-      // en carrÈ
+      // en carr√©
       matrice_jeu[4][0] = jeu_tetramino + 1 ;
       matrice_jeu[4][1] = jeu_tetramino + 1 ;
       matrice_jeu[5][0] = jeu_tetramino + 1 ;
@@ -513,6 +530,7 @@ void creer_tetramino(int l ,int h ,int  matrice_jeu[l][h]){
       break;      
     }
   /* verif_matrice_jeu (NB_BLOCS_LARGEUR,NB_BLOCS_HAUTEUR ,matrice_jeu); */
+  // generation nouveau tetramino
   future_Tetramino = (SDL_GetTicks()%7);
   rotation=0;
 }
@@ -530,7 +548,7 @@ void afficher_matrice_jeu (int l ,int h ,int  matrice_jeu[l][h],SDL_Rect positio
 	positionTetramino.x = decalage_x + (px*j);
 	positionTetramino.y = decalage_y + (px*i);
 	if (matrice_jeu[j][i]>10){
-	  //Affichage d'un carrÈ fixe
+	  //Affichage d'un carr√© fix√©
 	  SDL_BlitSurface (Tetramino[matrice_jeu[j][i]-11], NULL, ecran, &positionTetramino);
 	}
 	else{						     
@@ -560,6 +578,7 @@ int chute_du_tetramino(int l ,int h ,int  matrice_jeu[l][h])
     for (i=21;i>=0 && chute_possible ;i--){
       for (j=1;j<11&& chute_possible;j++)
 	{if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0){
+	    //chute des carre
 	    matrice_jeu[j][i+1] = matrice_jeu[j][i];
 	    matrice_jeu[j][i] = 0;
 	  }
@@ -567,22 +586,24 @@ int chute_du_tetramino(int l ,int h ,int  matrice_jeu[l][h])
     }
   }
   else  {
-    stop=1;
+    stop=1;// les carres ce bloque
     for (i=23;i>=0;i--){
       for (j=1;j<11;j++){
 	if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0){					
 	  matrice_jeu[j][i] = matrice_jeu[j][i] + 10;
 	  suite=1;
-	  if (i<=2){jeu_pas_fini=0;
+	  if (i<=2){jeu_pas_fini=0;//tetramino ce bloque dans les carre du haut le jeu et fini
 	  }
 	}			
       }
     }     	
     score=score + 1+ (10*(niveau-1));
+    // verification si ligne complete et chute
     chute_ligne(NB_BLOCS_LARGEUR ,NB_BLOCS_HAUTEUR,matrice_jeu);
     /* SDL_Delay (300); */
     if(jeu_pas_fini){
       SDL_Delay (300);
+      //si jeu pas fini on rejoue avec le tetramino  suivant
       creer_tetramino(NB_BLOCS_LARGEUR ,NB_BLOCS_HAUTEUR,matrice_jeu);}
   } 
   /* verif_matrice_jeu (NB_BLOCS_LARGEUR,NB_BLOCS_HAUTEUR ,matrice_jeu); */
@@ -604,9 +625,9 @@ void tourner_piece (int l ,int h ,int  matrice_jeu[l][h]){
 	  break;
 	case 1:
 	  switch (rotation) { 
-	  case 0: //On vÈrifie les cases a remplir
+	  case 0: //On v√©rifie les cases a remplire
 	    if (matrice_jeu[j+2][i+2]==0 && matrice_jeu[j+2][i-1]==0 && matrice_jeu[j+2][i+1]==0){
-	      //Ok, on pivote							
+	      //Ok, on pivote et  on enregistre la nouvelle rotation							
 	      matrice_jeu[j+2][i+2] = matrice_jeu[j][i];
 	      matrice_jeu[j+2][i+1] = matrice_jeu[j+1][i];
 	      matrice_jeu[j+2][i-1] = matrice_jeu[j+3][i];
@@ -628,7 +649,7 @@ void tourner_piece (int l ,int h ,int  matrice_jeu[l][h]){
 	    }
 	    break;
 	  }
-	  tetramino_trouve = 1; 
+	  tetramino_trouve = 1; // on arrete
 	  break;
 	case 2:
 	  switch (rotation){
@@ -828,7 +849,7 @@ void deplacementgauche(int l ,int h ,int  matrice_jeu[l][h]){
       }
     }
   }
-  if (gauche_possible){
+  if (gauche_possible){// on deplace
     for (i=21;i>=0 && gauche_possible ;i--){
       for (j=1;j<11&& gauche_possible;j++){
 	if (matrice_jeu[j][i] < 10 && matrice_jeu[j][i]>0){
@@ -874,7 +895,7 @@ void chute_ligne (int l ,int h ,int  matrice_jeu[l][h])
   int j;
   int i2;
   int ligne_pleine;
-  int total = 0; // nombre de lignes effacÈes
+  int total = 0; // nombre de lignes effac√©es
   for (i=21;i>=2;i--){
     ligne_pleine=1;
     for (j=1;j<11;j++){	
@@ -927,7 +948,7 @@ void afficher_niveau (SDL_Color Vert,TTF_Font *police,SDL_Rect pos_niveau,SDL_Su
 void afficher_timer (SDL_Color Vert,TTF_Font *police,SDL_Rect pos_timer,SDL_Surface *surface_timer, SDL_Surface *ecran)
 {
   char chaine_timer [6];
-  if ( time/60 <= 999){
+  if ( time/60 <= 999){// on test les depacements
     sprintf ( chaine_timer, "%d  %d",(time/60)%60,time%60);
     surface_timer = TTF_RenderText_Solid ( police,chaine_timer ,Vert);
     if(surface_timer) {
