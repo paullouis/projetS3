@@ -3,7 +3,7 @@
   ------
   Par Paul ROBIN et Louis DUDOT
 
-  Rôle : ecran d'accueil
+  RÃ´le : ecran d'accueil
 */
 
 #include <stdlib.h>
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     printf( "Echec lors du chargement de la video : %s", SDL_GetError() );
     SDL_Quit();
   }
-  SDL_WM_SetIcon(ico, NULL); // L'icône doit être chargée avant SDL_SetVideoMode
+  SDL_WM_SetIcon(ico, NULL); // L'icÃ´ne doit Ãªtre chargÃ©e avant SDL_SetVideoMode
   ecran = SDL_SetVideoMode(LARGEUR_FENETRE, HAUTEUR_FENETRE, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
   SDL_WM_SetCaption("Tetris Clone", NULL);
   SDL_ShowCursor(SDL_DISABLE);
@@ -66,20 +66,24 @@ int main(int argc, char *argv[])
 	    case SDLK_ESCAPE: // Veut sortir
 	      continuer = 0;
 	      break;
-	    case SDLK_j: // Demande à jouer
+	    case SDLK_j: // Demande Ã  jouer
 	      jouer(ecran);
 	      break;
 	    }
 	  break;
         }
 
-      // Effacement de l'écran puis affichage
+      // Effacement de l'Ã©cran puis affichage
       SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
       SDL_BlitSurface(Background, NULL, ecran, &positionBackground);
       SDL_BlitSurface(Menu, NULL, ecran, &positionMenu);
       SDL_Flip(ecran);
     }
+<<<<<<< HEAD
   // Libération des surfaces chargées et de l audio
+=======
+  // LibÃ©ration des surfaces chargÃ©es et de l audio
+>>>>>>> df0958b6b0c59eb8298b72d25272a262ebddf483
 
   SDL_FreeSurface(Menu);
   SDL_FreeSurface(Background);
