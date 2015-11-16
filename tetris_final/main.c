@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     }
 
   int continuer = 1;
-
+  // lecture des images
   ico = IMG_Load("images/ico.png"); Background = IMG_Load("images/backgroud.jpg"); Menu = IMG_Load("images/menu.png");
 
   if( ( ico == NULL ) || ( Background == NULL ) || ( Menu == NULL ) ){ 
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
  
   positionBackground.x = 0;
   positionBackground.y = 0;
- 
+  // pas besoin car png et SDL_image.h
   /* SDL_SetColorKey(Menu, SDL_SRCCOLORKEY, SDL_MapRGB(Menu->format, 0,0,0)); */
 
   positionMenu.x = 30;
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
       SDL_BlitSurface(Menu, NULL, ecran, &positionMenu);
       SDL_Flip(ecran);
     }
-  // Libération des surfaces chargées
+  // Libération des surfaces chargées et de l audio
 
   SDL_FreeSurface(Menu);
   SDL_FreeSurface(Background);
