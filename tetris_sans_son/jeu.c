@@ -83,9 +83,7 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
   stop=0;
   volume_son=50;
   volume_musique=50;
-
-  if(niveau<=10){
-    rythme=1000-(90*niveau);}
+  rythme=1000;
   FILE* fichier = NULL;
   fichier = fopen("best_score.s", "r");
   if (fichier == NULL){
@@ -152,7 +150,10 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
 	fclose(fichier);
       }
     }
-   
+    // vitesse de chute en fonction du niveau
+    if(niveau<=10){
+    rythme=1000-(100*(niveau-1));}
+
     SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
     SDL_BlitSurface(Background2, NULL, ecran, &positionBackground2);
     afficher_futur_Tetramino(positionFuturTetramino,Tetramino,ecran );

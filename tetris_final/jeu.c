@@ -114,9 +114,8 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
   stop=0;
   volume_son=50;
   volume_musique=50;
-  // vitesse de chute en fonction du niveau
-  if(niveau<=10){
-    rythme=1000-(90*niveau);}
+  // vitesse de chute
+  rythme=1000;
   //lecture du score dans un fichier
   FILE* fichier = NULL;
   fichier = fopen("best_score.s", "r");
@@ -231,6 +230,10 @@ if( (Background2 == NULL ) || (surface_perdu == NULL ) || ( surface_aide == NULL
       Mix_PlayChannel(-1,son_stop, 0);
       stop=0;
     }
+  // vitesse de chute en fonction du niveau
+  if(niveau<=10){
+    rythme=1000-(100*(niveau-1));}
+
     // affichages
     SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
     SDL_BlitSurface(Background2, NULL, ecran, &positionBackground2);
